@@ -1,0 +1,84 @@
+/* Box Model Hack */
+* {
+     box-sizing: border-box;
+}
+
+/* Clear fix hack */
+.clearfix:after {
+     content: ".";
+     display: block;
+     clear: both;
+     visibility: hidden;
+     line-height: 0;
+     height: 0;
+}
+
+.clear {
+	clear: both;
+}
+
+/******************************************
+/* BASE STYLES
+/*******************************************/
+
+:root {
+     --textColor: rgb(60, 167, 241); 
+     --backgroundColor: rgb(31,31,31);
+}
+
+body {
+     background: var(--backgroundColor);
+     color: var(--textColor);
+     min-height: 100vh;
+     margin: 0;
+     display: flex;
+}
+
+
+/******************************************
+/* LAYOUT
+/*******************************************/
+/* header {
+
+}
+
+footer {
+
+} */
+
+/******************************************
+/* ADDITIONAL STYLES
+/*******************************************/
+
+/* *{
+     border: 1px solid green;
+} */
+
+main {
+     min-height: 100vh;  
+     flex-grow: 1; 
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+}
+
+nav {
+     background: rgb(40,40,40);
+     min-height: 100vh;
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+}
+
+#rbsContainer {
+     display: flex;
+}
+
+.rbc {
+     display: flex;
+     flex-direction: column;
+}
+
+button {
+     margin: 5px;
+}
