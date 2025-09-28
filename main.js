@@ -1,5 +1,5 @@
 let SHEET_ID = "1G5MVxRUtbkhdOr41PhxSSczPskuqaH0_9bgcsUaO5pw"
-let API_KEY = "AIzaSyA9xA5JdeoEwP2W5HOBYAmnKm7e6K_Xmcw"
+let API_KEY = "AIzaSyBGlTopXKSbFuQwL_Hxu5WtwWFjqt7gjcA"
 
 main()
 
