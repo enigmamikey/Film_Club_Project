@@ -1,25 +1,55 @@
+let data = []
+let roundNums = []
+let miniData = []
 main()
 
 async function main() {
-    let data = await fetchAllData()
-    let roundNums = getRoundNums(data)
-    createRoundButtons(roundNums, data)
-    let miniData = findSubData(data,roundNums.length,roundNums[roundNums.length - 1])
-    displayRoundData(miniData)
+    data = await fetchAllData()
+    console.log(data)
+    roundNums = getRoundNums()
+    createRoundButtons()
+    miniData = findSubData(roundNums.length,roundNums[roundNums.length - 1])
+    displayRoundData()
 }
 
 function handleSelectMovie(i) {console.log(`movie ${i}`)}
 
 function handleRateButtons(i) {console.log(`member ${i}`)}
-    
-function displayRoundData(data) {
+
+function createRoundButtons() {
+    let container = document.querySelector('#rbsContainer')
+    for (let i = 1; i <= roundNums.length; i++) {
+        let section = document.createElement('section')
+        section.classList.add('rbc')
+        container.appendChild(section)
+        for (let j = roundNums[i-1]; j >= 1; j--) {
+            let button = document.createElement('button')
+            button.innerHTML = `Round ${i}.${j}`
+            button.addEventListener('click', () => {
+                miniData = findSubData(i,j)
+                displayRoundData()
+            }) 
+            section.appendChild(button)
+        }
+    }
+}
+
+function findSubData(v,r) {
+    return {
+        members: data.members.filter(e => e.version_number == v),
+        movies: data.movies.filter(e => e.version_number == v && e.round_number == r),
+        ratings: data.ratings.filter(e => e.version_number == v && e.round_number == r),
+    }
+}
+
+function displayRoundData() {
     let grid = document.querySelector('#grid')
     grid.innerHTML = ''
 
     // Round i.j
-    console.log(data)
-    let v = data.movies[0].version_number
-    let r = data.movies[0].round_number
+    console.log(miniData)
+    let v = miniData.movies[0].version_number
+    let r = miniData.movies[0].round_number
     document.querySelector('#roundNum').textContent = `Round ${v}.${r}`
 
     let extraCol = {left: ['member', 'button'], right: ['ratCount']}
@@ -32,12 +62,12 @@ function displayRoundData(data) {
     fillRatings()
 
     function fillRatings() {
-        data.ratings.forEach((rat) => {
+        miniData.ratings.forEach((rat) => {
             let score = rat.score
             if (score != 0) {
                 // figure out movie position
                 let movID = rat.movie_id
-                let movie = data.movies.find(v => v.movie_id == movID)
+                let movie = miniData.movies.find(v => v.movie_id == movID)
                 let pos = movie.position - 1
 
                 // figure out member
@@ -53,9 +83,9 @@ function displayRoundData(data) {
         let memNum = extraRow.top.findIndex(v => v == 'member')
         let movNum = extraRow.top.findIndex(v => v == 'movie')
         let butNum = extraRow.top.findIndex(v => v == 'button')
-        data.movies.forEach((mov,i) => {
+        miniData.movies.forEach((mov,i) => {
             // member row
-            let member = data.members.find(mem => mem.membership_id == mov.membership_id)
+            let member = miniData.members.find(mem => mem.membership_id == mov.membership_id)
             document.querySelector(`#d${memNum}-${i + extraCol.left.length}`).textContent = `Week ${i+1} - ${member.first_name}`
             // movie row
             document.querySelector(`#d${movNum}-${i + extraCol.left.length}`).textContent = mov.title
@@ -70,13 +100,13 @@ function displayRoundData(data) {
         })
         // average row
         let avgNum = extraRow.bottom.findIndex(v => v == 'average')
-        document.querySelector(`#d${extraRow.top.length + data.members.length + avgNum}-${0}`).textContent = 'Average Score'
+        document.querySelector(`#d${extraRow.top.length + miniData.members.length + avgNum}-${0}`).textContent = 'Average Score'
     }
 
     function fillExtraCol() {
         let memNum = extraCol.left.findIndex(v => v == 'member')
         let butNum = extraCol.left.findIndex(v => v == 'button')
-        data.members.forEach((mem,i) => {
+        miniData.members.forEach((mem,i) => {
             // member column
             document.querySelector(`#d${i + extraRow.top.length}-${memNum}`).textContent = mem.first_name 
             // button column
@@ -90,7 +120,7 @@ function displayRoundData(data) {
         })
         // rating count column
         let ratNum = extraCol.right.findIndex(v => v == 'ratCount')
-        document.querySelector(`#d${0}-${extraCol.left.length + data.movies.length + ratNum}`).innerHTML = 'Rating Count'
+        document.querySelector(`#d${0}-${extraCol.left.length + miniData.movies.length + ratNum}`).innerHTML = 'Rating Count'
     }
 
     function buildGrid() {
@@ -108,39 +138,13 @@ function displayRoundData(data) {
 
     function calcGridSize() {
         return {
-            col: data.movies.length + extraCol.left.length + extraCol.right.length,
-            row: data.members.length + extraRow.top.length + extraRow.bottom.length,
+            col: miniData.movies.length + extraCol.left.length + extraCol.right.length,
+            row: miniData.members.length + extraRow.top.length + extraRow.bottom.length,
         }
     }
 }
 
-function findSubData(data,v,r) {
-    return {
-        members: data.members.filter(e => e.version_number == v),
-        movies: data.movies.filter(e => e.version_number == v && e.round_number == r),
-        ratings: data.ratings.filter(e => e.version_number == v && e.round_number == r),
-    }
-}
-
-function createRoundButtons(roundNums, data) {
-    let container = document.querySelector('#rbsContainer')
-    for (let i = 1; i <= roundNums.length; i++) {
-        let section = document.createElement('section')
-        section.classList.add('rbc')
-        container.appendChild(section)
-        for (let j = roundNums[i-1]; j >= 1; j--) {
-            let button = document.createElement('button')
-            button.innerHTML = `Round ${i}.${j}`
-            button.addEventListener('click', () => {
-                let miniData = findSubData(data,i,j)
-                displayRoundData(miniData)
-            }) 
-            section.appendChild(button)
-        }
-    }
-}
-
-function getRoundNums(data) {
+function getRoundNums() {
     let roundNums = []
     let totalVersions = Math.max(
         ...data.rounds
