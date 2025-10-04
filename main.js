@@ -1,8 +1,3 @@
-// testing gitHub stuff
-
-let SHEET_ID = "1G5MVxRUtbkhdOr41PhxSSczPskuqaH0_9bgcsUaO5pw"
-let API_KEY = "AIzaSyBGlTopXKSbFuQwL_Hxu5WtwWFjqt7gjcA"
-
 main()
 
 async function main() {
